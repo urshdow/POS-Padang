@@ -5,7 +5,6 @@ def main(page: ft.Page):
     page.title = "Wareg Express"
     page.window.width = 400
     page.window.height = 800
-    page.bgcolor = "#010049"
     page.theme_animation_style = ft.AnimationStyle(duration = 500, curve = ft.AnimationCurve.EASE_IN_OUT)
     page.theme_mode = ft.ThemeMode.SYSTEM
 
