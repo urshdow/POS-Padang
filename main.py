@@ -2,6 +2,7 @@ import flet as ft
 from pages.auth.login import buat_halaman_login
 from pages.user.beranda_user import buat_beranda_user
 from pages.penjual.beranda_penjual import buat_beranda_penjual
+from pages.driver.beranda_driver import buat_beranda_driver
 
 def main(page: ft.Page):
     page.title = "Wareg Express"
@@ -51,8 +52,21 @@ def main(page: ft.Page):
             page.add(konten)
             return
         else:
-            page.appbar = ft.AppBar(title=ft.Text(f"Driver: {nama_user}"), bgcolor="#E8F5E9")
-            konten = ft.Text("Ini Beranda Driver: Switch Online/Offline & Order Masuk.")
+            page.appbar = ft.AppBar(
+                title=ft.Text(f"Driver: {nama_user}", color="black"),
+                bgcolor="#E8F5E9",
+                actions=[
+                    ft.IconButton(
+                        ft.Icons.LOGOUT,
+                        icon_color="black",
+                        tooltip="Logout",
+                        on_click=keluar_akun,
+                    )
+                ],
+            )
+            konten = buat_beranda_driver(page=page)
+            page.add(konten)
+            return
 
         page.add(
             ft.Column(
