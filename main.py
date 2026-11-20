@@ -2,7 +2,7 @@ import flet as ft
 from pages.auth.login import buat_halaman_login
 
 def main(page: ft.Page):
-    page.title = "FoodExpress App"
+    page.title = "Wareg Express"
     page.window.width = 400
     page.window.height = 800
     page.bgcolor = "#010049"
