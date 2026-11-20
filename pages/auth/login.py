@@ -31,7 +31,7 @@ def buat_halaman_login(on_login_success):
 
     return ft.Column(
         [
-            ft.Icon(ft.Icons.DELIVERY_DINING, size=64, color="orange"),
+            ft.Icon(ft.Icons.DELIVERY_DINING, size=64, color="#00b7ff"),
             ft.Text("FoodExpress", size=28, weight=ft.FontWeight.BOLD),
             ft.Text("Silakan masuk sesuai akun Anda", color="grey"),
             ft.Container(height=10),
