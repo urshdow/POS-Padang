@@ -1,22 +1,38 @@
 import flet as ft
 from pages.auth.login import buat_halaman_login
+from pages.user.beranda_user import buat_beranda_user
 
 def main(page: ft.Page):
     page.title = "Wareg Express"
     page.window.width = 400
     page.window.height = 800
-    page.theme_animation_style = ft.AnimationStyle(duration = 500, curve = ft.AnimationCurve.EASE_IN_OUT)
     page.theme_mode = ft.ThemeMode.SYSTEM
 
     def keluar_akun(e):
         tampilkan_login()
 
+    def buka_detail_resto(data_resto):
+        print("Restoran dipilih:", data_resto["nama"])
+
     def buka_beranda_role(role: str, nama_user: str):
         page.clean()
 
         if role == "user":
-            page.appbar = ft.AppBar(title=ft.Text(f"Halo, {nama_user}"), bgcolor="#E3F2FD")
-            konten = ft.Text("Ini Beranda Pembeli: Daftar Restoran akan tampil di sini.")
+            page.appbar = ft.AppBar(
+                title=ft.Text(f"Halo, {nama_user}", color="black"),
+                bgcolor="#E3F2FD",
+                actions=[
+                    ft.IconButton(
+                        ft.Icons.LOGOUT,
+                        icon_color="black",
+                        tooltip="Logout",
+                        on_click=keluar_akun,
+                    )
+                ],
+            )
+            konten = buat_beranda_user(on_pilih_resto=buka_detail_resto)
+            page.add(konten)
+            return
         elif role == "penjual":
             page.appbar = ft.AppBar(title=ft.Text(f"Toko: {nama_user}"), bgcolor="#FFF3E0")
             konten = ft.Text("Ini Beranda Penjual: Menu Kelola Stok, Pesanan & Export Excel.")
