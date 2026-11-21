@@ -78,7 +78,7 @@ def buat_beranda_user(on_pilih_resto):
 
             if cocok_kategori and cocok_nama:
                 kartu = ft.Container(
-                    bgcolor="#1E293B",
+                    bgcolor="#202E44",
                     border_radius=12,
                     padding=14,
                     ink=True,
