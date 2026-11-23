@@ -22,7 +22,7 @@ def main(page: ft.Page):
         if role == "user":
             page.appbar = ft.AppBar(
                 title=ft.Text(f"Halo, {nama_user}", color="black"),
-                bgcolor="#232b20",
+                bgcolor="#e2d6c6",
                 actions=[
                     ft.IconButton(
                         ft.Icons.LOGOUT,
@@ -38,7 +38,7 @@ def main(page: ft.Page):
         elif role == "penjual":
             page.appbar = ft.AppBar(
                 title=ft.Text(f"Toko: {nama_user}", color="black"),
-                    bgcolor="#232b20",
+                    bgcolor="#e2d6c6",
                         actions=[
                             ft.IconButton(
                         ft.Icons.LOGOUT,
