@@ -93,7 +93,7 @@ def buat_beranda_user(on_pilih_resto):
                                     ft.Container(
                                         width=52,
                                         height=52,
-                                        bgcolor="#FF9800",
+                                        bgcolor="#FCA21A",
                                         border_radius=10,
                                         alignment=ft.Alignment.CENTER,
                                         content=ft.Icon(
