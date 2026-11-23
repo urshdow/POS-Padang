@@ -15,7 +15,7 @@ def buat_halaman_login(on_login_success):
         options=[
             ft.dropdown.Option("user", "Pembeli (User)"),
             ft.dropdown.Option("penjual", "Restoran (Penjual)"),
-            ft.dropdown.Option("driver", "Kurir (Driver)"),
+            #ft.dropdown.Option("driver", "Kurir (Driver)"),
         ],
     )
     pesan_error = ft.Text("", color="red", size=12)
