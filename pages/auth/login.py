@@ -1,12 +1,12 @@
 import flet as ft
 
 def buat_halaman_login(on_login_success):
-    input_user = ft.TextField(label="Email atau No. HP", width=320)
+    input_user = ft.TextField(label="Email atau No. HP", width=320, color='#232b20')
     input_pass = ft.TextField(
         label="Kata Sandi",
         password=True,
         can_reveal_password=True,
-        width=320,
+        width=320, color='#232b20'
     )
     pilih_role = ft.Dropdown(
         label="Masuk Sebagai",
@@ -31,9 +31,9 @@ def buat_halaman_login(on_login_success):
 
     return ft.Column(
         [
-            ft.Icon(ft.Icons.DELIVERY_DINING, size=64, color="#00b7ff"),
-            ft.Text("Wareg Express", size=28, weight=ft.FontWeight.BOLD),
-            ft.Text("Silakan masuk sesuai akun Anda", color="grey"),
+            ft.Icon(ft.Icons.DELIVERY_DINING, size=64, color="#6c4830"),
+            ft.Text("Padang", size=28, weight=ft.FontWeight.BOLD, color = '#232b20'),
+            ft.Text("Silakan masuk sesuai akun Anda", color='#232b20'),
             ft.Container(height=10),
             input_user,
             input_pass,
@@ -43,7 +43,7 @@ def buat_halaman_login(on_login_success):
                 "Masuk",
                 width=320,
                 height=45,
-                on_click=klik_masuk,
+                on_click=klik_masuk, color='#232b20', bgcolor = '#6c4830'
             ),
         ],
         alignment=ft.MainAxisAlignment.CENTER,

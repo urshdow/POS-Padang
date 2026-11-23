@@ -5,10 +5,10 @@ from pages.penjual.beranda_penjual import buat_beranda_penjual
 #from pages.driver.beranda_driver import buat_beranda_driver
 
 def main(page: ft.Page):
-    page.title = "Wareg Express"
+    page.title = "Padang"
     page.window.width = 400
     page.window.height = 800
-    page.theme_mode = ft.ThemeMode.SYSTEM
+    page.bgcolor = "#e2d6c6"
 
     def keluar_akun(e):
         tampilkan_login()
@@ -22,7 +22,7 @@ def main(page: ft.Page):
         if role == "user":
             page.appbar = ft.AppBar(
                 title=ft.Text(f"Halo, {nama_user}", color="black"),
-                bgcolor="#E3F2FD",
+                bgcolor="#232b20",
                 actions=[
                     ft.IconButton(
                         ft.Icons.LOGOUT,
@@ -38,7 +38,7 @@ def main(page: ft.Page):
         elif role == "penjual":
             page.appbar = ft.AppBar(
                 title=ft.Text(f"Toko: {nama_user}", color="black"),
-                    bgcolor="#FFF3E0",
+                    bgcolor="#232b20",
                         actions=[
                             ft.IconButton(
                         ft.Icons.LOGOUT,
