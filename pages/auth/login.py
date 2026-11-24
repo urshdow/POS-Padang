@@ -31,7 +31,10 @@ def buat_halaman_login(on_login_success):
 
     return ft.Column(
         [
-            ft.Icon(ft.Icons.DELIVERY_DINING, size=64, color="#6c4830"),
+            ft.Container(
+                width = 64, 
+                height = 64,  
+                content = ft.Image(src="assets/Desain Tanpa Judul (1).png"),),
             ft.Text("Padang", size=28, weight=ft.FontWeight.BOLD, color = '#232b20'),
             ft.Text("Silakan masuk sesuai akun Anda", color='#232b20'),
             ft.Container(height=10),
