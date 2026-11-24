@@ -4,35 +4,74 @@ DATA_PESANAN_MASUK = [
     {
         "kode": "ORD-1024",
         "pembeli": "Budi Santoso",
-        "item": "2x Paket Geprek Level 3, 2x Es Teh Jumbo",
-        "total": 38000,
+        "item": "2x Paket Nasi Rendang Spesial, 2x Es Teh Jumbo",
+        "total": 68000,
         "status": "Menunggu Konfirmasi",
     },
     {
         "kode": "ORD-1025",
         "pembeli": "Siti Aminah",
-        "item": "1x Geprek Keju Lumer",
-        "total": 19000,
+        "item": "1x Paket Nasi Ayam Pop Komplit",
+        "total": 30000,
         "status": "Sedang Dimasak",
     },
 ]
 
+# Isi field "gambar" dengan path file lokal (misal: "assets/rendang.jpg") atau URL gambar
 DATA_MENU_TOKO = [
-    {"nama": "Paket Geprek Level 1-5", "harga": 15000, "stok": 25},
-    {"nama": "Geprek Keju Lumer", "harga": 19000, "stok": 12},
-    {"nama": "Es Teh Jumbo", "harga": 4000, "stok": 40},
+    {
+        "nama": "Paket Nasi Rendang Spesial",
+        "kategori": "Paket Nasi",
+        "tag": "★ Terlaris",
+        "deskripsi": "Nasi putih pulen dengan rendang daging sapi empuk berbumbu pekat, gulai nangka, dan sambal ijo.",
+        "harga": 32000,
+        "stok": 25,
+        "gambar": "",
+    },
+    {
+        "nama": "Paket Nasi Ayam Pop Komplit",
+        "kategori": "Paket Nasi",
+        "tag": "★ Terlaris",
+        "deskripsi": "Nasi putih hangat dengan ayam pop gurih khas Bukittinggi, sayur nangka, dan sambal tomat merah.",
+        "harga": 30000,
+        "stok": 15,
+        "gambar": "",
+    },
+    {
+        "nama": "Es Teh Jumbo",
+        "kategori": "Minuman",
+        "tag": "Segar",
+        "deskripsi": "Teh melati seduh segar dengan gula asli dan es batu melimpah.",
+        "harga": 5000,
+        "stok": 40,
+        "gambar": "",
+    },
 ]
 
 FITUR_UTAMA = [
-    {"key": "pesanan", "nama": "Pesanan", "icon": ft.Icons.SOUP_KITCHEN_OUTLINED},
-    {"key": "menu", "nama": "Menu", "icon": ft.Icons.MENU_BOOK_OUTLINED},
-    {"key": "kasir", "nama": "Kasir", "icon": ft.Icons.POINT_OF_SALE_OUTLINED, "badge": "Baru"},
-    {"key": "keuangan", "nama": "Keuangan &\nAnalisis", "icon": ft.Icons.ACCOUNT_BALANCE_WALLET_OUTLINED},
+    {"key": "pesanan", "nama": "Pesanan"},
+    {"key": "menu", "nama": "Menu"},
+    {"key": "kasir", "nama": "Kasir"},
+    {"key": "keuangan", "nama": "Keuangan"},
 ]
 
 
+class FullLayarContainer(ft.Container):
+    def did_mount(self):
+        try:
+            if self.page:
+                self.page.padding = 0
+                self.page.spacing = 0
+                self.page.bgcolor = "#FAF6F0"
+                if self.page.views:
+                    self.page.views[-1].padding = 0
+                    self.page.views[-1].spacing = 0
+                self.page.update()
+        except Exception:
+            pass
+
+
 def buat_beranda_penjual(on_export_excel=None):
-    # Hirarki warna sesuai :root
     BG_MAIN = "#FAF6F0"
     BG_CARD = "#FFFFFF"
     BG_SECONDARY = "#EFE7DC"
@@ -46,79 +85,231 @@ def buat_beranda_penjual(on_export_excel=None):
 
     tab_aktif = {"key": "pesanan"}
 
-    # 1. Status Toko (Buka / Tutup)
-    lbl_toko = ft.Text("Toko Sedang BUKA", weight=ft.FontWeight.BOLD, color=ACCENT_GREEN)
+    def buat_kotak_gambar(src_gambar):
+        if src_gambar:
+            konten = ft.Image(src=src_gambar, width=64, height=64, border_radius=12)
+        else:
+            konten = ft.Icon(ft.Icons.RESTAURANT_MENU, size=24, color=ACCENT_GOLD)
+
+        return ft.Container(
+            width=64,
+            height=64,
+            bgcolor=BG_MAIN,
+            border_radius=12,
+            border=ft.Border.all(1, BORDER_COLOR),
+            alignment=ft.Alignment(0, 0),
+            content=konten,
+        )
+
+    def buat_tag(teks, bg, warna_teks):
+        return ft.Container(
+            bgcolor=bg,
+            border_radius=10,
+            padding=ft.Padding.symmetric(horizontal=7, vertical=2),
+            content=ft.Text(teks, size=10, weight=ft.FontWeight.W_600, color=warna_teks),
+        )
+
+    def buat_tombol_stepper(ikon, warna, on_klik):
+        return ft.Container(
+            width=28,
+            height=28,
+            bgcolor=BG_MAIN,
+            border_radius=8,
+            border=ft.Border.all(1, BORDER_COLOR),
+            alignment=ft.Alignment(0, 0),
+            ink=True,
+            on_click=on_klik,
+            content=ft.Icon(ikon, size=16, color=warna),
+        )
+
+    # =========================================================================
+    # 1. HEADER ATAS RINGKAS (TANPA TOMBOL LAPORAN & PESANAN)
+    # =========================================================================
+    lbl_status_toko = ft.Text("Toko BUKA", size=11, weight=ft.FontWeight.BOLD, color=ACCENT_GREEN)
 
     def ubah_status_toko(e):
-        lbl_toko.value = "Toko Sedang BUKA" if e.control.value else "Toko TUTUP Sementara"
-        lbl_toko.color = ACCENT_GREEN if e.control.value else PRIMARY
-        lbl_toko.update()
+        lbl_status_toko.value = "Toko BUKA" if e.control.value else "Toko TUTUP"
+        lbl_status_toko.color = ACCENT_GREEN if e.control.value else PRIMARY
+        lbl_status_toko.update()
 
-    kartu_status = ft.Container(
+    header_atas = ft.Container(
         bgcolor=BG_CARD,
-        border_radius=12,
-        border=ft.Border.all(1, BORDER_COLOR),
-        padding=12,
+        border=ft.Border.only(bottom=ft.BorderSide(1, BORDER_COLOR)),
+        padding=ft.Padding.symmetric(horizontal=12, vertical=10),
         content=ft.Row(
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
             controls=[
                 ft.Row(
+                    expand=True,
                     spacing=10,
-                    controls=[ft.Icon(ft.Icons.STOREFRONT, color=PRIMARY, size=24), lbl_toko],
+                    controls=[
+                        ft.Container(
+                            width=38,
+                            height=38,
+                            bgcolor=PRIMARY,
+                            border_radius=10,
+                            alignment=ft.Alignment(0, 0),
+                            content=ft.Icon(ft.Icons.STOREFRONT, color=BG_CARD, size=20),
+                        ),
+                        ft.Column(
+                            expand=True,
+                            spacing=1,
+                            controls=[
+                                ft.Text(
+                                    "RM Padang Sinar Minang",
+                                    size=14,
+                                    weight=ft.FontWeight.BOLD,
+                                    color=TEXT_PRIMARY,
+                                    max_lines=1,
+                                    overflow=ft.TextOverflow.ELLIPSIS,
+                                ),
+                                ft.Row(
+                                    spacing=5,
+                                    controls=[
+                                        ft.Text("Panel Penjual •", size=11, color=TEXT_SECONDARY),
+                                        lbl_status_toko,
+                                    ],
+                                ),
+                            ],
+                        ),
+                    ],
                 ),
-                ft.Switch(value=True, active_color=ACCENT_GREEN, on_change=ubah_status_toko),
+                ft.Switch(
+                    value=True,
+                    active_color=ACCENT_GREEN,
+                    scale=0.85,
+                    on_change=ubah_status_toko,
+                ),
             ],
         ),
     )
 
-    # 2. Tampilan Masing-Masing Fitur
-    def view_pesanan():
-        items = []
-        for order in DATA_PESANAN_MASUK:
-            warna_awal = ACCENT_GREEN if order["status"] == "Siap Diambil Driver" else ACCENT_GOLD
-            lbl_status = ft.Text(order["status"], size=12, color=warna_awal, weight=ft.FontWeight.BOLD)
+    # =========================================================================
+    # 2. BILAH TAB SEGMENTED PILL (4 MENU)
+    # =========================================================================
+    baris_tab = ft.Row(spacing=3)
 
-            def proses(e, o=order, lbl=lbl_status):
+    def render_tabs():
+        baris_tab.controls.clear()
+        for f in FITUR_UTAMA:
+            aktif = tab_aktif["key"] == f["key"]
+            baris_tab.controls.append(
+                ft.Container(
+                    expand=True,
+                    bgcolor=PRIMARY if aktif else "transparent",
+                    border_radius=20,
+                    padding=ft.Padding.symmetric(vertical=8, horizontal=2),
+                    alignment=ft.Alignment(0, 0),
+                    ink=True,
+                    on_click=lambda _, k=f["key"]: pilih_fitur(k),
+                    content=ft.Text(
+                        f["nama"],
+                        size=11,
+                        weight=ft.FontWeight.BOLD if aktif else ft.FontWeight.W_600,
+                        color=BG_CARD if aktif else TEXT_PRIMARY,
+                        text_align=ft.TextAlign.CENTER,
+                        max_lines=1,
+                    ),
+                )
+            )
+
+    wadah_tab = ft.Container(
+        bgcolor=BG_SECONDARY,
+        border_radius=22,
+        padding=3,
+        content=baris_tab,
+    )
+
+    # =========================================================================
+    # 3. KONTEN TAB (PESANAN, MENU, KASIR, KEUANGAN & ANALISIS)
+    # =========================================================================
+    def view_pesanan():
+        kartu_list = []
+        for order in DATA_PESANAN_MASUK:
+            selesai = order["status"] == "Siap Diambil Driver"
+            lbl_status = ft.Text(
+                order["status"],
+                size=10,
+                weight=ft.FontWeight.BOLD,
+                color=ACCENT_GREEN if selesai else ACCENT_GOLD,
+            )
+
+            def proses_order(e, o=order, lbl=lbl_status):
                 o["status"] = "Siap Diambil Driver"
-                lbl.value, lbl.color = o["status"], ACCENT_GREEN
-                e.control.disabled, e.control.text = True, "Sudah Diproses"
+                lbl.value = o["status"]
+                lbl.color = ACCENT_GREEN
+                e.control.disabled = True
+                e.control.text = "Sudah Siap"
                 lbl.update()
                 e.control.update()
 
-            items.append(
+            kartu_list.append(
                 ft.Container(
                     bgcolor=BG_CARD,
-                    border_radius=12,
+                    border_radius=14,
                     border=ft.Border.all(1, BORDER_COLOR),
-                    padding=14,
+                    padding=12,
                     content=ft.Column(
-                        spacing=6,
+                        spacing=10,
                         controls=[
                             ft.Row(
-                                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                                vertical_alignment=ft.CrossAxisAlignment.START,
+                                spacing=10,
                                 controls=[
-                                    ft.Text(
-                                        f"{order['kode']} • {order['pembeli']}",
-                                        weight=ft.FontWeight.BOLD,
-                                        color=TEXT_PRIMARY,
+                                    buat_kotak_gambar(""),
+                                    ft.Column(
+                                        expand=True,
+                                        spacing=4,
+                                        controls=[
+                                            ft.Row(
+                                                wrap=True,
+                                                spacing=5,
+                                                run_spacing=4,
+                                                controls=[
+                                                    buat_tag(order["kode"], BG_SECONDARY, TEXT_SECONDARY),
+                                                    ft.Container(
+                                                        bgcolor="#FEF3C7" if not selesai else "#DCFCE7",
+                                                        border_radius=10,
+                                                        padding=ft.Padding.symmetric(horizontal=7, vertical=2),
+                                                        content=lbl_status,
+                                                    ),
+                                                ],
+                                            ),
+                                            ft.Text(
+                                                order["pembeli"],
+                                                size=14,
+                                                weight=ft.FontWeight.BOLD,
+                                                color=TEXT_PRIMARY,
+                                            ),
+                                            ft.Text(order["item"], size=12, color=TEXT_SECONDARY),
+                                        ],
                                     ),
-                                    lbl_status,
                                 ],
                             ),
-                            ft.Text(order["item"], size=13, color=TEXT_SECONDARY),
+                            ft.Divider(height=1, color=BORDER_COLOR),
                             ft.Row(
                                 alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                                vertical_alignment=ft.CrossAxisAlignment.CENTER,
                                 controls=[
-                                    ft.Text(
-                                        f"Total: Rp {order['total']:,}",
-                                        weight=ft.FontWeight.BOLD,
-                                        color=PRIMARY,
+                                    ft.Column(
+                                        spacing=0,
+                                        controls=[
+                                            ft.Text("Total Pembayaran", size=10, color=TEXT_SECONDARY),
+                                            ft.Text(
+                                                f"Rp {order['total']:,}",
+                                                size=14,
+                                                weight=ft.FontWeight.BOLD,
+                                                color=TEXT_PRIMARY,
+                                            ),
+                                        ],
                                     ),
                                     ft.Button(
-                                        "Terima & Siapkan",
+                                        "Sudah Siap" if selesai else "Terima & Siapkan",
                                         bgcolor=PRIMARY,
                                         color=BG_CARD,
-                                        on_click=proses,
+                                        disabled=selesai,
+                                        on_click=proses_order,
                                     ),
                                 ],
                             ),
@@ -126,22 +317,16 @@ def buat_beranda_penjual(on_export_excel=None):
                     ),
                 )
             )
-        return ft.Column(
-            spacing=10,
-            controls=[
-                ft.Text("Pesanan Masuk", size=16, weight=ft.FontWeight.BOLD, color=TEXT_PRIMARY),
-                *items,
-            ],
-        )
+        return ft.Column(spacing=10, controls=kartu_list)
 
     def view_menu():
-        items = []
+        kartu_list = []
         for m in DATA_MENU_TOKO:
             lbl_stok = ft.Text(
                 f"Stok: {m['stok']}",
-                size=13,
-                color=ACCENT_GREEN if m["stok"] > 0 else PRIMARY,
+                size=12,
                 weight=ft.FontWeight.BOLD,
+                color=ACCENT_GREEN if m["stok"] > 0 else PRIMARY,
             )
 
             def edit_stok(e, menu=m, delta=1, lbl=lbl_stok):
@@ -150,39 +335,83 @@ def buat_beranda_penjual(on_export_excel=None):
                 lbl.color = ACCENT_GREEN if menu["stok"] > 0 else PRIMARY
                 lbl.update()
 
-            items.append(
+            kartu_list.append(
                 ft.Container(
                     bgcolor=BG_CARD,
-                    border_radius=10,
+                    border_radius=14,
                     border=ft.Border.all(1, BORDER_COLOR),
                     padding=12,
-                    content=ft.Row(
-                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                    content=ft.Column(
+                        spacing=10,
                         controls=[
-                            ft.Column(
-                                spacing=2,
+                            ft.Row(
+                                vertical_alignment=ft.CrossAxisAlignment.START,
+                                spacing=10,
                                 controls=[
-                                    ft.Text(m["nama"], weight=ft.FontWeight.BOLD, color=TEXT_PRIMARY),
-                                    ft.Text(f"Rp {m['harga']:,}", size=12, color=TEXT_SECONDARY),
+                                    buat_kotak_gambar(m["gambar"]),
+                                    ft.Column(
+                                        expand=True,
+                                        spacing=4,
+                                        controls=[
+                                            ft.Row(
+                                                wrap=True,
+                                                spacing=5,
+                                                run_spacing=4,
+                                                controls=[
+                                                    buat_tag(m["kategori"], BG_SECONDARY, TEXT_SECONDARY),
+                                                    buat_tag(m["tag"], "#FEF3C7", "#B45309"),
+                                                ],
+                                            ),
+                                            ft.Text(
+                                                m["nama"],
+                                                size=14,
+                                                weight=ft.FontWeight.BOLD,
+                                                color=TEXT_PRIMARY,
+                                            ),
+                                            ft.Text(
+                                                m["deskripsi"],
+                                                size=11,
+                                                color=TEXT_SECONDARY,
+                                                max_lines=2,
+                                                overflow=ft.TextOverflow.ELLIPSIS,
+                                            ),
+                                        ],
+                                    ),
                                 ],
                             ),
+                            ft.Divider(height=1, color=BORDER_COLOR),
                             ft.Row(
-                                spacing=4,
+                                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                                vertical_alignment=ft.CrossAxisAlignment.CENTER,
                                 controls=[
-                                    ft.IconButton(
-                                        icon=ft.Icons.REMOVE_CIRCLE_OUTLINE,
-                                        icon_color=PRIMARY,
-                                        icon_size=22,
-                                        tooltip="Kurangi Stok",
-                                        on_click=lambda e, menu=m, lbl=lbl_stok: edit_stok(e, menu, -1, lbl),
+                                    ft.Column(
+                                        spacing=0,
+                                        controls=[
+                                            ft.Text("Harga", size=10, color=TEXT_SECONDARY),
+                                            ft.Text(
+                                                f"Rp {m['harga']:,}",
+                                                size=14,
+                                                weight=ft.FontWeight.BOLD,
+                                                color=TEXT_PRIMARY,
+                                            ),
+                                        ],
                                     ),
-                                    lbl_stok,
-                                    ft.IconButton(
-                                        icon=ft.Icons.ADD_CIRCLE_OUTLINE,
-                                        icon_color=ACCENT_GREEN,
-                                        icon_size=22,
-                                        tooltip="Tambah Stok",
-                                        on_click=lambda e, menu=m, lbl=lbl_stok: edit_stok(e, menu, 1, lbl),
+                                    ft.Row(
+                                        spacing=8,
+                                        vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                                        controls=[
+                                            buat_tombol_stepper(
+                                                ft.Icons.REMOVE,
+                                                PRIMARY,
+                                                lambda e, menu=m, lbl=lbl_stok: edit_stok(e, menu, -1, lbl),
+                                            ),
+                                            lbl_stok,
+                                            buat_tombol_stepper(
+                                                ft.Icons.ADD,
+                                                ACCENT_GREEN,
+                                                lambda e, menu=m, lbl=lbl_stok: edit_stok(e, menu, 1, lbl),
+                                            ),
+                                        ],
                                     ),
                                 ],
                             ),
@@ -190,18 +419,12 @@ def buat_beranda_penjual(on_export_excel=None):
                     ),
                 )
             )
-        return ft.Column(
-            spacing=8,
-            controls=[
-                ft.Text("Daftar Menu & Edit Stok", size=16, weight=ft.FontWeight.BOLD, color=TEXT_PRIMARY),
-                *items,
-            ],
-        )
+        return ft.Column(spacing=10, controls=kartu_list)
 
     def view_kasir():
         keranjang = {i: 0 for i in range(len(DATA_MENU_TOKO))}
-        txt_total = ft.Text("Rp 0", size=18, weight=ft.FontWeight.BOLD, color=PRIMARY)
-        txt_info = ft.Text("0 item dipilih", size=12, color=TEXT_SECONDARY)
+        txt_total = ft.Text("Rp 0", size=16, weight=ft.FontWeight.BOLD, color=PRIMARY)
+        txt_info = ft.Text("0 item dipilih", size=11, color=TEXT_SECONDARY)
         list_kasir = ft.Column(spacing=10)
 
         def hitung_ulang():
@@ -209,68 +432,123 @@ def buat_beranda_penjual(on_export_excel=None):
             total_qty = sum(keranjang.values())
             txt_total.value = f"Rp {total_rp:,}"
             txt_info.value = f"{total_qty} item dipilih"
+            txt_info.color = TEXT_SECONDARY
             txt_total.update()
             txt_info.update()
 
-        def render_pilihan():
+        def render_kasir():
             list_kasir.controls.clear()
             for i, m in enumerate(DATA_MENU_TOKO):
-                lbl_qty = ft.Text(
-                    str(keranjang[i]),
-                    size=14,
-                    weight=ft.FontWeight.BOLD,
-                    color=TEXT_PRIMARY,
-                    width=22,
-                    text_align=ft.TextAlign.CENTER,
-                )
+                qty_skrg = keranjang[i]
 
-                def ubah_qty(e, idx=i, delta=1, lbl=lbl_qty):
+                def ubah_qty(e, idx=i, delta=1):
                     baru = keranjang[idx] + delta
                     if 0 <= baru <= DATA_MENU_TOKO[idx]["stok"]:
                         keranjang[idx] = baru
-                        lbl.value = str(baru)
-                        lbl.color = PRIMARY if baru > 0 else TEXT_PRIMARY
-                        lbl.update()
+                        render_kasir()
+                        list_kasir.update()
                         hitung_ulang()
+
+                if qty_skrg == 0:
+                    kontrol_kanan = ft.Button(
+                        "+ Tambah",
+                        bgcolor=PRIMARY,
+                        color=BG_CARD,
+                        disabled=m["stok"] == 0,
+                        on_click=lambda e, idx=i: ubah_qty(e, idx, 1),
+                    )
+                else:
+                    kontrol_kanan = ft.Row(
+                        spacing=8,
+                        vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                        controls=[
+                            buat_tombol_stepper(
+                                ft.Icons.REMOVE,
+                                PRIMARY,
+                                lambda e, idx=i: ubah_qty(e, idx, -1),
+                            ),
+                            ft.Text(
+                                str(qty_skrg),
+                                size=13,
+                                weight=ft.FontWeight.BOLD,
+                                color=PRIMARY,
+                                width=18,
+                                text_align=ft.TextAlign.CENTER,
+                            ),
+                            buat_tombol_stepper(
+                                ft.Icons.ADD,
+                                ACCENT_GREEN,
+                                lambda e, idx=i: ubah_qty(e, idx, 1),
+                            ),
+                        ],
+                    )
 
                 list_kasir.controls.append(
                     ft.Container(
                         bgcolor=BG_CARD,
-                        border_radius=10,
+                        border_radius=14,
                         border=ft.Border.all(1, BORDER_COLOR),
                         padding=12,
-                        content=ft.Row(
-                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                        content=ft.Column(
+                            spacing=10,
                             controls=[
-                                ft.Column(
-                                    spacing=2,
+                                ft.Row(
+                                    vertical_alignment=ft.CrossAxisAlignment.START,
+                                    spacing=10,
                                     controls=[
-                                        ft.Text(m["nama"], weight=ft.FontWeight.BOLD, color=TEXT_PRIMARY),
-                                        ft.Text(
-                                            f"Rp {m['harga']:,} • Stok: {m['stok']}",
-                                            size=12,
-                                            color=TEXT_SECONDARY,
+                                        buat_kotak_gambar(m["gambar"]),
+                                        ft.Column(
+                                            expand=True,
+                                            spacing=4,
+                                            controls=[
+                                                ft.Row(
+                                                    wrap=True,
+                                                    spacing=5,
+                                                    run_spacing=4,
+                                                    controls=[
+                                                        buat_tag(m["kategori"], BG_SECONDARY, TEXT_SECONDARY),
+                                                        buat_tag(
+                                                            f"Stok: {m['stok']}",
+                                                            "#DCFCE7" if m["stok"] > 0 else "#FEE2E2",
+                                                            ACCENT_GREEN if m["stok"] > 0 else PRIMARY,
+                                                        ),
+                                                    ],
+                                                ),
+                                                ft.Text(
+                                                    m["nama"],
+                                                    size=14,
+                                                    weight=ft.FontWeight.BOLD,
+                                                    color=TEXT_PRIMARY,
+                                                ),
+                                                ft.Text(
+                                                    m["deskripsi"],
+                                                    size=11,
+                                                    color=TEXT_SECONDARY,
+                                                    max_lines=2,
+                                                    overflow=ft.TextOverflow.ELLIPSIS,
+                                                ),
+                                            ],
                                         ),
                                     ],
                                 ),
+                                ft.Divider(height=1, color=BORDER_COLOR),
                                 ft.Row(
-                                    spacing=4,
+                                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                                    vertical_alignment=ft.CrossAxisAlignment.CENTER,
                                     controls=[
-                                        ft.IconButton(
-                                            icon=ft.Icons.REMOVE_CIRCLE_OUTLINE,
-                                            icon_color=PRIMARY,
-                                            icon_size=22,
-                                            tooltip="Kurangi Item",
-                                            on_click=lambda e, idx=i, lbl=lbl_qty: ubah_qty(e, idx, -1, lbl),
+                                        ft.Column(
+                                            spacing=0,
+                                            controls=[
+                                                ft.Text("Harga", size=10, color=TEXT_SECONDARY),
+                                                ft.Text(
+                                                    f"Rp {m['harga']:,}",
+                                                    size=14,
+                                                    weight=ft.FontWeight.BOLD,
+                                                    color=TEXT_PRIMARY,
+                                                ),
+                                            ],
                                         ),
-                                        lbl_qty,
-                                        ft.IconButton(
-                                            icon=ft.Icons.ADD_CIRCLE_OUTLINE,
-                                            icon_color=ACCENT_GREEN,
-                                            icon_size=22,
-                                            tooltip="Tambah Item",
-                                            on_click=lambda e, idx=i, lbl=lbl_qty: ubah_qty(e, idx, 1, lbl),
-                                        ),
+                                        kontrol_kanan,
                                     ],
                                 ),
                             ],
@@ -284,7 +562,7 @@ def buat_beranda_penjual(on_export_excel=None):
                 for i, qty in keranjang.items():
                     DATA_MENU_TOKO[i]["stok"] = max(0, DATA_MENU_TOKO[i]["stok"] - qty)
                     keranjang[i] = 0
-                render_pilihan()
+                render_kasir()
                 list_kasir.update()
                 txt_total.value = "Rp 0"
                 txt_info.value = f"Transaksi Rp {total_rp:,} selesai! Stok terpotong."
@@ -292,28 +570,23 @@ def buat_beranda_penjual(on_export_excel=None):
                 txt_total.update()
                 txt_info.update()
 
-        render_pilihan()
+        render_kasir()
 
         return ft.Column(
             spacing=10,
             controls=[
-                ft.Text("Kasir Cepat", size=16, weight=ft.FontWeight.BOLD, color=TEXT_PRIMARY),
                 list_kasir,
                 ft.Container(
-                    bgcolor=BG_SECONDARY,
-                    border_radius=12,
-                    border=ft.Border.all(1, BORDER_COLOR),
-                    padding=14,
+                    bgcolor=BG_CARD,
+                    border_radius=14,
+                    border=ft.Border.all(1.5, PRIMARY),
+                    padding=12,
                     content=ft.Row(
                         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                        vertical_alignment=ft.CrossAxisAlignment.CENTER,
                         controls=[
-                            ft.Column(spacing=2, controls=[txt_info, txt_total]),
-                            ft.Button(
-                                "Bayar",
-                                bgcolor=PRIMARY,
-                                color=BG_CARD,
-                                on_click=bayar,
-                            ),
+                            ft.Column(expand=True, spacing=1, controls=[txt_info, txt_total]),
+                            ft.Button("Bayar", bgcolor=PRIMARY, color=BG_CARD, on_click=bayar),
                         ],
                     ),
                 ),
@@ -321,7 +594,7 @@ def buat_beranda_penjual(on_export_excel=None):
         )
 
     def view_keuangan_analisis():
-        notif = ft.Text("", size=12, color=ACCENT_GREEN)
+        notif = ft.Text("", size=11, color=ACCENT_GREEN)
 
         def klik_export(e):
             if on_export_excel:
@@ -333,122 +606,113 @@ def buat_beranda_penjual(on_export_excel=None):
         return ft.Column(
             spacing=10,
             controls=[
-                ft.Text("Keuangan & Analisis", size=16, weight=ft.FontWeight.BOLD, color=TEXT_PRIMARY),
                 ft.Row(
-                    spacing=10,
+                    spacing=8,
                     controls=[
                         ft.Container(
                             expand=True,
                             bgcolor=BG_CARD,
-                            border_radius=12,
+                            border_radius=14,
                             border=ft.Border.all(1, BORDER_COLOR),
-                            padding=14,
+                            padding=12,
                             content=ft.Column(
-                                spacing=4,
+                                spacing=3,
                                 controls=[
-                                    ft.Text("Pendapatan Hari Ini", size=12, color=TEXT_SECONDARY),
-                                    ft.Text("Rp 450,000", size=18, weight=ft.FontWeight.BOLD, color=PRIMARY),
+                                    ft.Text("Pendapatan Hari Ini", size=11, color=TEXT_SECONDARY),
+                                    ft.Text("Rp 450,000", size=16, weight=ft.FontWeight.BOLD, color=PRIMARY),
                                 ],
                             ),
                         ),
                         ft.Container(
                             expand=True,
                             bgcolor=BG_CARD,
-                            border_radius=12,
+                            border_radius=14,
                             border=ft.Border.all(1, BORDER_COLOR),
-                            padding=14,
+                            padding=12,
                             content=ft.Column(
-                                spacing=4,
+                                spacing=3,
                                 controls=[
-                                    ft.Text("Pesanan Selesai", size=12, color=TEXT_SECONDARY),
-                                    ft.Text("18 Order", size=18, weight=ft.FontWeight.BOLD, color=TEXT_PRIMARY),
+                                    ft.Text("Pesanan Selesai", size=11, color=TEXT_SECONDARY),
+                                    ft.Text("18 Order", size=16, weight=ft.FontWeight.BOLD, color=TEXT_PRIMARY),
                                 ],
                             ),
                         ),
                     ],
                 ),
                 ft.Container(
-                    bgcolor=BG_SECONDARY,
-                    border_radius=12,
+                    bgcolor=BG_CARD,
+                    border_radius=14,
                     border=ft.Border.all(1, BORDER_COLOR),
-                    padding=14,
-                    content=ft.Row(
-                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                    padding=12,
+                    content=ft.Column(
+                        spacing=8,
                         controls=[
-                            ft.Text("Menu Terlaris: Paket Geprek Level 1-5", size=13, color=TEXT_PRIMARY),
-                            ft.Text(
-                                "Rata-rata: Rp 25,000",
-                                size=13,
-                                weight=ft.FontWeight.BOLD,
-                                color=ACCENT_GOLD,
+                            ft.Row(
+                                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                                controls=[
+                                    ft.Text(
+                                        "Keuangan & Analisis",
+                                        size=14,
+                                        weight=ft.FontWeight.BOLD,
+                                        color=TEXT_PRIMARY,
+                                    ),
+                                    buat_tag("Hari Ini", "#FEF3C7", "#B45309"),
+                                ],
+                            ),
+                            ft.Divider(height=1, color=BORDER_COLOR),
+                            ft.Row(
+                                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                                spacing=8,
+                                controls=[
+                                    ft.Text("Menu Terlaris", size=12, color=TEXT_SECONDARY),
+                                    ft.Text(
+                                        "Paket Nasi Rendang",
+                                        expand=True,
+                                        size=12,
+                                        weight=ft.FontWeight.BOLD,
+                                        color=ACCENT_GREEN,
+                                        text_align=ft.TextAlign.RIGHT,
+                                        max_lines=1,
+                                        overflow=ft.TextOverflow.ELLIPSIS,
+                                    ),
+                                ],
+                            ),
+                            ft.Row(
+                                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                                spacing=8,
+                                controls=[
+                                    ft.Text("Rata-rata Order", size=12, color=TEXT_SECONDARY),
+                                    ft.Text(
+                                        "Rp 25,000",
+                                        size=12,
+                                        weight=ft.FontWeight.BOLD,
+                                        color=ACCENT_GOLD,
+                                    ),
+                                ],
                             ),
                         ],
                     ),
                 ),
-                ft.Button(
-                    "Export Excel (.xlsx)",
-                    icon=ft.Icons.DOWNLOAD,
-                    bgcolor=PRIMARY_HOVER,
-                    color=BG_CARD,
-                    on_click=klik_export,
+                ft.Row(
+                    controls=[
+                        ft.Button(
+                            "Export Laporan Excel (.xlsx)",
+                            icon=ft.Icons.DOWNLOAD,
+                            expand=True,
+                            bgcolor=PRIMARY_HOVER,
+                            color=BG_CARD,
+                            on_click=klik_export,
+                        ),
+                    ]
                 ),
                 notif,
             ],
         )
 
-    # 3. Grid 4 Fitur Utama (Pesanan, Menu, Kasir, Keuangan & Analisis)
-    grid_fitur = ft.Row(alignment=ft.MainAxisAlignment.SPACE_BETWEEN, spacing=8)
-    konten_aktif = ft.Container(content=view_pesanan())
-
-    def render_grid():
-        grid_fitur.controls.clear()
-        for f in FITUR_UTAMA:
-            aktif = tab_aktif["key"] == f["key"]
-            kotak = ft.Container(
-                width=62,
-                height=62,
-                top=6,
-                left=7,
-                bgcolor=BG_CARD if aktif else BG_SECONDARY,
-                border_radius=16,
-                border=ft.Border.all(2 if aktif else 1, PRIMARY if aktif else BORDER_COLOR),
-                alignment=ft.Alignment(0, 0),
-                content=ft.Icon(f["icon"], size=28, color=PRIMARY if aktif else TEXT_PRIMARY),
-            )
-            lapisan = [kotak]
-            if f.get("badge"):
-                lapisan.append(
-                    ft.Container(
-                        top=0,
-                        right=2,
-                        bgcolor=ACCENT_GREEN,
-                        border_radius=8,
-                        padding=ft.Padding.symmetric(horizontal=6, vertical=1),
-                        content=ft.Text(f["badge"], size=10, weight=ft.FontWeight.BOLD, color=BG_CARD),
-                    )
-                )
-            grid_fitur.controls.append(
-                ft.Container(
-                    expand=True,
-                    ink=True,
-                    border_radius=12,
-                    on_click=lambda _, k=f["key"]: pilih_fitur(k),
-                    content=ft.Column(
-                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                        spacing=4,
-                        controls=[
-                            ft.Stack(width=76, height=70, controls=lapisan),
-                            ft.Text(
-                                f["nama"],
-                                size=12,
-                                color=PRIMARY if aktif else TEXT_PRIMARY,
-                                weight=ft.FontWeight.BOLD if aktif else ft.FontWeight.W_500,
-                                text_align=ft.TextAlign.CENTER,
-                            ),
-                        ],
-                    ),
-                )
-            )
+    # =========================================================================
+    # 4. PENGATURAN NAVIGASI & FULL-SCREEN MOBILE CONTAINER
+    # =========================================================================
+    konten_aktif = ft.Container(expand=True, content=view_pesanan())
 
     def pilih_fitur(key):
         tab_aktif["key"] = key
@@ -459,24 +723,48 @@ def buat_beranda_penjual(on_export_excel=None):
             "keuangan": view_keuangan_analisis,
         }
         konten_aktif.content = views[key]()
-        render_grid()
-        grid_fitur.update()
+        render_tabs()
+        wadah_tab.update()
         konten_aktif.update()
 
-    render_grid()
+    render_tabs()
 
-    return ft.Container(
+    return FullLayarContainer(
         expand=True,
+        margin=0,
+        padding=0,
         bgcolor=BG_MAIN,
-        padding=14,
         content=ft.Column(
             expand=True,
-            scroll=ft.ScrollMode.AUTO,
-            spacing=14,
+            spacing=0,
             controls=[
-                kartu_status,
-                grid_fitur,
-                konten_aktif,
+                header_atas,
+                ft.Container(
+                    expand=True,
+                    padding=ft.Padding.symmetric(horizontal=12, vertical=10),
+                    content=ft.Column(
+                        expand=True,
+                        scroll=ft.ScrollMode.AUTO,
+                        spacing=10,
+                        controls=[
+                            wadah_tab,
+                            konten_aktif,
+                        ],
+                    ),
+                ),
             ],
         ),
     )
+
+
+if __name__ == "__main__":
+    def main(page: ft.Page):
+        page.title = "Panel Penjual"
+        page.padding = 0
+        page.spacing = 0
+        page.bgcolor = "#FAF6F0"
+        page.window.width = 390
+        page.window.height = 844
+        page.add(buat_beranda_penjual())
+
+    ft.app(target=main)
