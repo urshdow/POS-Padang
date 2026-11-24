@@ -197,7 +197,7 @@ def buat_beranda_user(on_pilih_resto):
                 "Rekomendasi Restoran Terdekat",
                 size=16,
                 weight=ft.FontWeight.BOLD,
-                color="white",
+                color="#2d241e",
             ),
             daftar_kartu_resto,
         ],
