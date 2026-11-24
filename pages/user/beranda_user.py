@@ -2,7 +2,7 @@ import flet as ft
 
 RESTORAN_AKTIF = {
     "id": "R01",
-    "nama": "Warung Padang Sederhana",
+    "nama": 'Warung Padang Sederhana',
     "kategori": "Masakan Padang",
     "rating": "4.8",
     "jarak": "1.2 km",
