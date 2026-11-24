@@ -78,7 +78,7 @@ def buat_beranda_user(on_pilih_resto):
 
             if cocok_kategori and cocok_nama:
                 kartu = ft.Container(
-                    bgcolor="#202E44",
+                    bgcolor="#d95d39",
                     border_radius=12,
                     padding=14,
                     ink=True,
@@ -93,12 +93,12 @@ def buat_beranda_user(on_pilih_resto):
                                     ft.Container(
                                         width=52,
                                         height=52,
-                                        bgcolor="#FCA21A",
+                                        bgcolor="#FFFFFF",
                                         border_radius=10,
                                         alignment=ft.Alignment.CENTER,
                                         content=ft.Icon(
                                             ft.Icons.RESTAURANT,
-                                            color="white",
+                                            color="#d95d39",
                                             size=28,
                                         ),
                                     ),
@@ -114,7 +114,7 @@ def buat_beranda_user(on_pilih_resto):
                                             ft.Text(
                                                 resto["kategori"],
                                                 size=12,
-                                                color="#94A3B8",
+                                                color="#ffffff",
                                             ),
                                             ft.Row(
                                                 spacing=6,
@@ -158,7 +158,7 @@ def buat_beranda_user(on_pilih_resto):
         hint_text="Cari nama restoran...",
         prefix_icon=ft.Icons.SEARCH,
         border_radius=12,
-        bgcolor="#1E293B",
+        bgcolor="#efe7dc",
         color="white",
         on_change=lambda e: (perbarui_daftar(e.control.value), daftar_kartu_resto.update()),
     )

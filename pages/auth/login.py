@@ -35,8 +35,8 @@ def buat_halaman_login(on_login_success):
                 width = 64, 
                 height = 64,  
                 content = ft.Image(src="assets/Desain Tanpa Judul (1).png"),),
-            ft.Text("Padang", size=28, weight=ft.FontWeight.BOLD, color = '#232b20'),
-            ft.Text("Silakan masuk sesuai akun Anda", color='#232b20'),
+            ft.Text("Padang", size=28, weight=ft.FontWeight.BOLD, color = '#2d241e'),
+            ft.Text("Silakan masuk sesuai akun Anda", color='#786b61'),
             ft.Container(height=10),
             input_user,
             input_pass,
@@ -46,7 +46,7 @@ def buat_halaman_login(on_login_success):
                 "Masuk",
                 width=320,
                 height=45,
-                on_click=klik_masuk, color='#E8F5E9', bgcolor = '#6c4830'
+                on_click=klik_masuk, color='#faf6f0', bgcolor = '#d95d39'
             ),
         ],
         alignment=ft.MainAxisAlignment.CENTER,

@@ -7,7 +7,7 @@ def main(page: ft.Page):
     page.title = "Padang"
     page.window.width = 400
     page.window.height = 800
-    page.bgcolor = "#e2d6c6"
+    page.bgcolor = "#faf6f0"
 
     def keluar_akun(e):
         tampilkan_login()
@@ -21,7 +21,7 @@ def main(page: ft.Page):
         if role == "user":
             page.appbar = ft.AppBar(
                 title=ft.Text(f"Halo, {nama_user}", color="black"),
-                bgcolor="#e2d6c6",
+                bgcolor="#faf6f0",
                 actions=[
                     ft.IconButton(
                         ft.Icons.LOGOUT,
@@ -37,7 +37,7 @@ def main(page: ft.Page):
         else:
             page.appbar = ft.AppBar(
                 title=ft.Text(f"Toko: {nama_user}", color="black"),
-                    bgcolor="#e2d6c6",
+                    bgcolor="#faf6f0",
                         actions=[
                             ft.IconButton(
                         ft.Icons.LOGOUT,
