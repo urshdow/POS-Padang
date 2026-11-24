@@ -36,7 +36,8 @@ def buat_halaman_login(on_login_success):
                 height = 64,  
                 content = ft.Image(src="assets/Desain Tanpa Judul (1).png"),),
             ft.Text("Padang", size=28, weight=ft.FontWeight.BOLD, color = '#2d241e'),
-            ft.Text("Silakan masuk sesuai akun Anda", color='#786b61'),
+            ft.Text("Silakan masuk sesuai akun Anda", color='#786b61r' \
+            ''),
             ft.Container(height=10),
             input_user,
             input_pass,

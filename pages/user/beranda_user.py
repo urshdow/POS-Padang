@@ -1,176 +1,223 @@
 import flet as ft
 
-# Data contoh restoran (sudah dilengkapi menu & koordinat untuk tahap berikutnya)
-DATA_RESTORAN = [
-    {
-        "id": "R01",
-        "nama": "Ayam Geprek Juara",
-        "kategori": "Ayam & Bebek",
-        "rating": "4.8",
-        "jarak": "1.2 km",
-        "ongkir": 5000,
-        "koordinat": (-7.9797, 112.6304),
-        "menu": [
-            {"nama": "Paket Geprek Level 1-5", "harga": 15000},
-            {"nama": "Geprek Keju Lumer", "harga": 19000},
-            {"nama": "Es Teh Jumbo", "harga": 4000},
-        ],
-    },
-    {
-        "id": "R02",
-        "nama": "Nasi Goreng Kambing Kebon",
-        "kategori": "Nasi & Mie",
-        "rating": "4.9",
-        "jarak": "2.0 km",
-        "ongkir": 7000,
-        "koordinat": (-7.9750, 112.6340),
-        "menu": [
-            {"nama": "Nasi Goreng Kambing Spesial", "harga": 25000},
-            {"nama": "Nasi Goreng Ayam Kampung", "harga": 18000},
-            {"nama": "Jeruk Hangat", "harga": 5000},
-        ],
-    },
-    {
-        "id": "R03",
-        "nama": "Mie Ayam Pangsit Cak Min",
-        "kategori": "Nasi & Mie",
-        "rating": "4.7",
-        "jarak": "0.8 km",
-        "ongkir": 4000,
-        "koordinat": (-7.9820, 112.6280),
-        "menu": [
-            {"nama": "Mie Ayam Bakso Urat", "harga": 16000},
-            {"nama": "Mie Ayam Pangsit Goreng", "harga": 14000},
-            {"nama": "Es Campur", "harga": 8000},
-        ],
-    },
-    {
-        "id": "R04",
-        "nama": "Kopi Kenangan Mantan",
-        "kategori": "Minuman",
-        "rating": "4.8",
-        "jarak": "1.5 km",
-        "ongkir": 6000,
-        "koordinat": (-7.9775, 112.6255),
-        "menu": [
-            {"nama": "Es Kopi Susu Gula Aren", "harga": 18000},
-            {"nama": "Matcha Latte", "harga": 22000},
-            {"nama": "Roti Bakar Cokelat Keju", "harga": 15000},
-        ],
-    },
-]
+RESTORAN_AKTIF = {
+    "id": "R01",
+    "nama": "Warung Padang Sederhana",
+    "kategori": "Masakan Padang",
+    "rating": "4.8",
+    "jarak": "1.2 km",
+    "ongkir": 5000,
+    "koordinat": (-7.9797, 112.6304),
+    "menu": [
+        {"id": "M01", "nama": "Rendang Daging", "kategori": "Daging", "harga": 22000},
+        {"id": "M02", "nama": "Ayam Pop", "kategori": "Ayam", "harga": 20000},
+        {"id": "M03", "nama": "Dendeng Balado", "kategori": "Daging", "harga": 21000},
+        {"id": "M04", "nama": "Gulai Kepala Kakap", "kategori": "Ikan", "harga": 28000},
+        {"id": "M05", "nama": "Telur Dadar Padang", "kategori": "Telur", "harga": 10000},
+        {"id": "M06", "nama": "Daun Singkong & Sambal", "kategori": "Pelengkap", "harga": 6000},
+    ],
+}
 
 
-def buat_beranda_user(on_pilih_resto):
+def buat_beranda_user(on_checkout=None):
     kategori_aktif = "Semua"
-    daftar_kartu_resto = ft.Column(spacing=12)
+    keranjang = {}  # {menu_id: jumlah}
 
-    # Fungsi untuk memperbarui tampilan daftar restoran sesuai pencarian & kategori
-    def perbarui_daftar(kata_kunci=""):
-        daftar_kartu_resto.controls.clear()
+    daftar_kartu_menu = ft.Column(spacing=12)
+    teks_ringkasan = ft.Text(
+        "0 item  •  Total: Rp 0",
+        size=14,
+        weight=ft.FontWeight.BOLD,
+        color="white",
+    )
+
+    def hitung_ringkasan():
+        total_item = sum(keranjang.values())
+        subtotal = 0
+        for item in RESTORAN_AKTIF["menu"]:
+            jumlah = keranjang.get(item["id"], 0)
+            subtotal += item["harga"] * jumlah
+
+        total_bayar = subtotal + RESTORAN_AKTIF["ongkir"] if total_item > 0 else 0
+        teks_ringkasan.value = (
+            f"{total_item} item  •  Subtotal Rp {subtotal:,}  •  "
+            f"Total (+Ongkir Rp {RESTORAN_AKTIF['ongkir']:,} jika ada): Rp {total_bayar:,}"
+        )
+
+    def ubah_jumlah(menu_id, delta):
+        jumlah_baru = keranjang.get(menu_id, 0) + delta
+        if jumlah_baru <= 0:
+            keranjang.pop(menu_id, None)
+        else:
+            keranjang[menu_id] = jumlah_baru
+        hitung_ringkasan()
+        perbarui_daftar_menu(input_cari.value)
+        daftar_kartu_menu.update()
+        teks_ringkasan.update()
+
+    def perbarui_daftar_menu(kata_kunci=""):
+        daftar_kartu_menu.controls.clear()
         kata_kunci = kata_kunci.lower().strip()
 
-        for resto in DATA_RESTORAN:
+        for menu in RESTORAN_AKTIF["menu"]:
             cocok_kategori = (
-                kategori_aktif == "Semua" or resto["kategori"] == kategori_aktif
+                kategori_aktif == "Semua" or menu["kategori"] == kategori_aktif
             )
-            cocok_nama = kata_kunci in resto["nama"].lower()
+            cocok_nama = (
+                kata_kunci in menu["nama"].lower()
+                or kata_kunci in menu["kategori"].lower()
+            )
 
             if cocok_kategori and cocok_nama:
+                menu_id = menu["id"]
+                jumlah = keranjang.get(menu_id, 0)
+
                 kartu = ft.Container(
                     bgcolor="#d95d39",
                     border_radius=12,
                     padding=14,
-                    ink=True,
-                    on_click=lambda e, r=resto: on_pilih_resto(r),
                     content=ft.Row(
                         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                         vertical_alignment=ft.CrossAxisAlignment.CENTER,
                         controls=[
-                            ft.Row(
-                                spacing=12,
+                            ft.Column(
+                                spacing=4,
+                                expand=True,
                                 controls=[
-                                    ft.Container(
-                                        width=52,
-                                        height=52,
-                                        bgcolor="#FFFFFF",
-                                        border_radius=10,
-                                        alignment=ft.Alignment.CENTER,
-                                        content=ft.Icon(
-                                            ft.Icons.RESTAURANT,
-                                            color="#d95d39",
-                                            size=28,
-                                        ),
+                                    ft.Text(
+                                        menu["nama"],
+                                        size=15,
+                                        weight=ft.FontWeight.BOLD,
+                                        color="white",
                                     ),
-                                    ft.Column(
-                                        spacing=4,
-                                        controls=[
-                                            ft.Text(
-                                                resto["nama"],
-                                                size=15,
-                                                weight=ft.FontWeight.BOLD,
-                                                color="white",
-                                            ),
-                                            ft.Text(
-                                                resto["kategori"],
-                                                size=12,
-                                                color="#ffffff",
-                                            ),
-                                            ft.Row(
-                                                spacing=6,
-                                                controls=[
-                                                    ft.Icon(
-                                                        ft.Icons.STAR,
-                                                        color="#FACC15",
-                                                        size=14,
-                                                    ),
-                                                    ft.Text(
-                                                        f"{resto['rating']}  •  {resto['jarak']}  •  Ongkir Rp {resto['ongkir']:,}",
-                                                        size=12,
-                                                        color="#CBD5E1",
-                                                    ),
-                                                ],
-                                            ),
-                                        ],
+                                    ft.Text(
+                                        menu["kategori"],
+                                        size=12,
+                                        color="#FDE8E1",
+                                    ),
+                                    ft.Text(
+                                        f"Rp {menu['harga']:,}",
+                                        size=13,
+                                        weight=ft.FontWeight.BOLD,
+                                        color="#FACC15",
                                     ),
                                 ],
                             ),
-                            ft.Icon(
-                                ft.Icons.CHEVRON_RIGHT,
-                                color="#94A3B8",
+                            ft.Row(
+                                spacing=8,
+                                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                                controls=[
+                                    ft.IconButton(
+                                        icon=ft.Icons.REMOVE_CIRCLE_OUTLINE,
+                                        icon_color="white",
+                                        disabled=jumlah == 0,
+                                        on_click=lambda e, mid=menu_id: ubah_jumlah(mid, -1),
+                                    ),
+                                    ft.Text(
+                                        str(jumlah),
+                                        size=14,
+                                        weight=ft.FontWeight.BOLD,
+                                        color="white",
+                                    ),
+                                    ft.IconButton(
+                                        icon=ft.Icons.ADD_CIRCLE_OUTLINE,
+                                        icon_color="white",
+                                        on_click=lambda e, mid=menu_id: ubah_jumlah(mid, 1),
+                                    ),
+                                ],
                             ),
                         ],
                     ),
                 )
-                daftar_kartu_resto.controls.append(kartu)
+                daftar_kartu_menu.controls.append(kartu)
 
-        if not daftar_kartu_resto.controls:
-            daftar_kartu_resto.controls.append(
+        if not daftar_kartu_menu.controls:
+            daftar_kartu_menu.controls.append(
                 ft.Text(
-                    "Restoran tidak ditemukan.",
+                    "Menu tidak ditemukan.",
                     color="#94A3B8",
                     italic=True,
                 )
             )
 
-    # Kotak pencarian
+    # Header informasi satu restoran
+    header_resto = ft.Container(
+        bgcolor="#2d241e",
+        border_radius=12,
+        padding=14,
+        content=ft.Row(
+            spacing=12,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            controls=[
+                ft.Container(
+                    width=52,
+                    height=52,
+                    bgcolor="#d95d39",
+                    border_radius=10,
+                    alignment=ft.Alignment.CENTER,
+                    content=ft.Icon(
+                        ft.Icons.RESTAURANT_MENU,
+                        color="white",
+                        size=28,
+                    ),
+                ),
+                ft.Column(
+                    spacing=4,
+                    expand=True,
+                    controls=[
+                        ft.Text(
+                            RESTORAN_AKTIF["nama"],
+                            size=16,
+                            weight=ft.FontWeight.BOLD,
+                            color="white",
+                        ),
+                        ft.Text(
+                            RESTORAN_AKTIF["kategori"],
+                            size=12,
+                            color="#E2E8F0",
+                        ),
+                        ft.Row(
+                            spacing=6,
+                            controls=[
+                                ft.Icon(
+                                    ft.Icons.STAR,
+                                    color="#FACC15",
+                                    size=14,
+                                ),
+                                ft.Text(
+                                    f"{RESTORAN_AKTIF['rating']}  •  {RESTORAN_AKTIF['jarak']}  •  Ongkir Rp {RESTORAN_AKTIF['ongkir']:,}",
+                                    size=12,
+                                    color="#CBD5E1",
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ],
+        ),
+    )
+
+    # Kotak pencarian menu
     input_cari = ft.TextField(
-        hint_text="Cari nama restoran...",
+        hint_text="Cari menu makanan...",
         prefix_icon=ft.Icons.SEARCH,
         border_radius=12,
         bgcolor="#efe7dc",
-        color="white",
-        on_change=lambda e: (perbarui_daftar(e.control.value), daftar_kartu_resto.update()),
+        color="#2d241e",
+        on_change=lambda e: (
+            perbarui_daftar_menu(e.control.value),
+            daftar_kartu_menu.update(),
+        ),
     )
 
-    # Tombol filter kategori
+    # Filter kategori menu
     def pilih_kategori(kat):
         nonlocal kategori_aktif
         kategori_aktif = kat
-        perbarui_daftar(input_cari.value)
-        daftar_kartu_resto.update()
+        perbarui_daftar_menu(input_cari.value)
+        daftar_kartu_menu.update()
 
-    daftar_kategori = ["Semua", "Ayam & Bebek", "Nasi & Mie", "Minuman"]
+    daftar_kategori = ["Semua", "Daging", "Ayam", "Ikan", "Telur", "Pelengkap"]
     baris_kategori = ft.Row(
         scroll=ft.ScrollMode.AUTO,
         spacing=8,
@@ -185,22 +232,44 @@ def buat_beranda_user(on_pilih_resto):
         ],
     )
 
-    # Muat daftar restoran pertama kali saat halaman dibuka
-    perbarui_daftar()
+    # Bar ringkasan pesanan di bawah
+    bar_pesanan = ft.Container(
+        bgcolor="#2d241e",
+        border_radius=12,
+        padding=14,
+        content=ft.Row(
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            controls=[
+                ft.Container(expand=True, content=teks_ringkasan),
+                ft.Button(
+                    "Pesan",
+                    bgcolor="#d95d39",
+                    color="white",
+                    on_click=lambda e: on_checkout(keranjang) if on_checkout else None,
+                ),
+            ],
+        ),
+    )
+
+    hitung_ringkasan()
+    perbarui_daftar_menu()
 
     return ft.Column(
         expand=True,
         scroll=ft.ScrollMode.AUTO,
         spacing=14,
         controls=[
+            header_resto,
             input_cari,
             baris_kategori,
             ft.Text(
-                "Rekomendasi Restoran Terdekat",
+                "Daftar Menu",
                 size=16,
                 weight=ft.FontWeight.BOLD,
                 color="#2d241e",
             ),
-            daftar_kartu_resto,
+            daftar_kartu_menu,
+            bar_pesanan,
         ],
     )

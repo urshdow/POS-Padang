@@ -31,7 +31,7 @@ def main(page: ft.Page):
                     )
                 ],
             )
-            konten = buat_beranda_user(on_pilih_resto=buka_detail_resto)
+            konten = buat_beranda_user(on_checkout=buka_detail_resto)
             page.add(konten)
             return
         else:
