@@ -2,7 +2,6 @@ import flet as ft
 from pages.auth.login import buat_halaman_login
 from pages.user.beranda_user import buat_beranda_user
 from pages.penjual.beranda_penjual import buat_beranda_penjual
-#from pages.driver.beranda_driver import buat_beranda_driver
 
 def main(page: ft.Page):
     page.title = "Padang"
@@ -35,7 +34,7 @@ def main(page: ft.Page):
             konten = buat_beranda_user(on_pilih_resto=buka_detail_resto)
             page.add(konten)
             return
-        elif role == "penjual":
+        else:
             page.appbar = ft.AppBar(
                 title=ft.Text(f"Toko: {nama_user}", color="black"),
                     bgcolor="#e2d6c6",
@@ -51,33 +50,7 @@ def main(page: ft.Page):
             konten = buat_beranda_penjual()
             page.add(konten)
             return
-        #else:
-            page.appbar = ft.AppBar(
-                title=ft.Text(f"Driver: {nama_user}", color="black"),
-                bgcolor="#E8F5E9",
-                actions=[
-                    ft.IconButton(
-                        ft.Icons.LOGOUT,
-                        icon_color="black",
-                        tooltip="Logout",
-                        on_click=keluar_akun,
-                    )
-                ],
-            )
-            konten = buat_beranda_driver(page=page)
-            page.add(konten)
-            return
-
-        page.add(
-            ft.Column(
-                [
-                    konten,
-                    ft.Button("Logout", on_click=keluar_akun),
-                ],
-                spacing=20,
-            )
-        )
-
+        
     def tampilkan_login():
         page.clean()
         page.appbar = None
