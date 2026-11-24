@@ -177,6 +177,8 @@ def buat_beranda_user(on_pilih_resto):
         controls=[
             ft.Button(
                 kat,
+                bgcolor="#d95d39",
+                color="white",
                 on_click=lambda e, k=kat: pilih_kategori(k),
             )
             for kat in daftar_kategori
