@@ -1,6 +1,7 @@
 import flet as ft
 from pages.auth.login import buat_halaman_login
-from pages.user.beranda_user import buat_beranda_user
+from pages.user.beranda_user import RESTORAN_AKTIF, buat_beranda_user
+from pages.user.keranjang_pembeli import tampilkan_keranjang
 from pages.penjual.beranda_penjual import buat_beranda_penjual
 
 def main(page: ft.Page):
@@ -14,6 +15,26 @@ def main(page: ft.Page):
 
     def lanjut_checkout(keranjang: dict[str, int]):
         print("Pesanan dipilih:", keranjang)
+
+    def tampilkan_beranda_user(keranjang=None):
+        page.clean()
+        page.add(
+            buat_beranda_user(
+                on_checkout=buka_keranjang,
+                keranjang_awal=keranjang,
+            )
+        )
+
+    def buka_keranjang(keranjang: dict[str, int]):
+        page.clean()
+        page.add(
+            tampilkan_keranjang(
+                keranjang,
+                RESTORAN_AKTIF["menu"],
+                on_kembali=lambda: tampilkan_beranda_user(keranjang),
+                on_checkout=lanjut_checkout,
+            )
+        )
 
     def buka_beranda_role(role: str, nama_user: str):
         page.clean()
@@ -31,8 +52,7 @@ def main(page: ft.Page):
                     )
                 ],
             )
-            konten = buat_beranda_user(on_checkout=lanjut_checkout)
-            page.add(konten)
+            tampilkan_beranda_user()
             return
         else:
             page.appbar = ft.AppBar(
