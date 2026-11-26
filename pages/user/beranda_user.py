@@ -2,7 +2,7 @@ import flet as ft
 
 RESTORAN_AKTIF = {
     "id": "R01",
-    "nama": 'Warung Padang Sederhana',
+    "nama": "Warung Padang Sederhana",
     "kategori": "Masakan Padang",
     "rating": "4.8",
     "jarak": "1.2 km",
@@ -18,17 +18,28 @@ RESTORAN_AKTIF = {
     ],
 }
 
+# Palet warna menyesuaikan hierarki gambar pertama
+WARNA_BG = "#f7f5f0"          # Latar belakang halaman (krem sangat terang)
+WARNA_CARD = "#ffffff"        # Permukaan kartu putih bersih
+WARNA_BORDER = "#e5e0d8"      # Garis tepi halus kartu
+WARNA_PRIMARY = "#d95d39"     # Aksen utama terakota/oranye bata
+WARNA_PRIMARY_SOFT = "#faece6"# Latar ikon/badge lembut
+WARNA_TEXT_DARK = "#1c1917"   # Teks utama gelap
+WARNA_TEXT_MUTED = "#78716c"  # Teks sekunder abu-abu hangat
+
 
 def buat_beranda_user(on_checkout=None):
     kategori_aktif = "Semua"
     keranjang = {}  # {menu_id: jumlah}
 
-    daftar_kartu_menu = ft.Column(spacing=12)
+    daftar_kartu_menu = ft.Column(spacing=10)
+    baris_kategori = ft.Row(scroll=ft.ScrollMode.AUTO, spacing=8)
+
     teks_ringkasan = ft.Text(
         "0 item  •  Total: Rp 0",
-        size=14,
+        size=13,
         weight=ft.FontWeight.BOLD,
-        color="white",
+        color=WARNA_TEXT_DARK,
     )
 
     def hitung_ringkasan():
@@ -40,8 +51,8 @@ def buat_beranda_user(on_checkout=None):
 
         total_bayar = subtotal + RESTORAN_AKTIF["ongkir"] if total_item > 0 else 0
         teks_ringkasan.value = (
-            f"{total_item} item  •  Subtotal Rp {subtotal:,}  •  "
-            f"Total (+Ongkir Rp {RESTORAN_AKTIF['ongkir']:,} jika ada): Rp {total_bayar:,}"
+            f"{total_item} item  •  Subtotal Rp {subtotal:,}\n"
+            f"Total (+Ongkir Rp {RESTORAN_AKTIF['ongkir']:,}): Rp {total_bayar:,}"
         )
 
     def ubah_jumlah(menu_id, delta):
@@ -73,43 +84,69 @@ def buat_beranda_user(on_checkout=None):
                 jumlah = keranjang.get(menu_id, 0)
 
                 kartu = ft.Container(
-                    bgcolor="#d95d39",
-                    border_radius=12,
+                    bgcolor=WARNA_CARD,
+                    border=ft.Border.all(1, WARNA_BORDER),
+                    border_radius=14,
                     padding=14,
                     content=ft.Row(
                         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                         vertical_alignment=ft.CrossAxisAlignment.CENTER,
                         controls=[
-                            ft.Column(
-                                spacing=4,
+                            ft.Row(
+                                spacing=12,
                                 expand=True,
+                                vertical_alignment=ft.CrossAxisAlignment.CENTER,
                                 controls=[
-                                    ft.Text(
-                                        menu["nama"],
-                                        size=15,
-                                        weight=ft.FontWeight.BOLD,
-                                        color="white",
+                                    ft.Container(
+                                        width=46,
+                                        height=46,
+                                        bgcolor=WARNA_PRIMARY_SOFT,
+                                        border_radius=12,
+                                        alignment=ft.Alignment.CENTER,
+                                        content=ft.Icon(
+                                            ft.Icons.RESTAURANT,
+                                            color=WARNA_PRIMARY,
+                                            size=22,
+                                        ),
                                     ),
-                                    ft.Text(
-                                        menu["kategori"],
-                                        size=12,
-                                        color="#FDE8E1",
-                                    ),
-                                    ft.Text(
-                                        f"Rp {menu['harga']:,}",
-                                        size=13,
-                                        weight=ft.FontWeight.BOLD,
-                                        color="#FACC15",
+                                    ft.Column(
+                                        spacing=3,
+                                        expand=True,
+                                        controls=[
+                                            ft.Container(
+                                                bgcolor="#f3efe9",
+                                                padding=ft.Padding.symmetric(horizontal=8, vertical=2),
+                                                border_radius=6,
+                                                content=ft.Text(
+                                                    menu["kategori"],
+                                                    size=10,
+                                                    weight=ft.FontWeight.W_600,
+                                                    color=WARNA_TEXT_MUTED,
+                                                ),
+                                            ),
+                                            ft.Text(
+                                                menu["nama"],
+                                                size=15,
+                                                weight=ft.FontWeight.BOLD,
+                                                color=WARNA_TEXT_DARK,
+                                            ),
+                                            ft.Text(
+                                                f"Rp {menu['harga']:,}",
+                                                size=13,
+                                                weight=ft.FontWeight.BOLD,
+                                                color=WARNA_PRIMARY,
+                                            ),
+                                        ],
                                     ),
                                 ],
                             ),
                             ft.Row(
-                                spacing=8,
+                                spacing=4,
                                 vertical_alignment=ft.CrossAxisAlignment.CENTER,
                                 controls=[
                                     ft.IconButton(
                                         icon=ft.Icons.REMOVE_CIRCLE_OUTLINE,
-                                        icon_color="white",
+                                        icon_color=WARNA_TEXT_MUTED if jumlah == 0 else WARNA_PRIMARY,
                                         disabled=jumlah == 0,
                                         on_click=lambda e, mid=menu_id: ubah_jumlah(mid, -1),
                                     ),
@@ -117,11 +154,11 @@ def buat_beranda_user(on_checkout=None):
                                         str(jumlah),
                                         size=14,
                                         weight=ft.FontWeight.BOLD,
-                                        color="white",
+                                        color=WARNA_TEXT_DARK,
                                     ),
                                     ft.IconButton(
                                         icon=ft.Icons.ADD_CIRCLE_OUTLINE,
-                                        icon_color="white",
+                                        icon_color=WARNA_PRIMARY,
                                         on_click=lambda e, mid=menu_id: ubah_jumlah(mid, 1),
                                     ),
                                 ],
@@ -135,59 +172,58 @@ def buat_beranda_user(on_checkout=None):
             daftar_kartu_menu.controls.append(
                 ft.Text(
                     "Menu tidak ditemukan.",
-                    color="#94A3B8",
+                    color=WARNA_TEXT_MUTED,
                     italic=True,
                 )
             )
 
-    # Header informasi satu restoran
+    # Header informasi restoran
     header_resto = ft.Container(
-        bgcolor="#2d241e",
-        border_radius=12,
+        bgcolor=WARNA_CARD,
+        border=ft.Border.all(1, WARNA_BORDER),
+        border_radius=14,
         padding=14,
         content=ft.Row(
             spacing=12,
             vertical_alignment=ft.CrossAxisAlignment.CENTER,
             controls=[
                 ft.Container(
-                    width=52,
-                    height=52,
-                    bgcolor="#d95d39",
-                    border_radius=10,
+                    width=50,
+                    height=50,
+                    bgcolor=WARNA_PRIMARY,
+                    border_radius=12,
                     alignment=ft.Alignment.CENTER,
                     content=ft.Icon(
-                        ft.Icons.RESTAURANT_MENU,
+                        ft.Icons.STOREFRONT,
                         color="white",
-                        size=28,
+                        size=26,
                     ),
                 ),
                 ft.Column(
-                    spacing=4,
+                    spacing=3,
                     expand=True,
                     controls=[
                         ft.Text(
                             RESTORAN_AKTIF["nama"],
                             size=16,
                             weight=ft.FontWeight.BOLD,
-                            color="white",
-                        ),
-                        ft.Text(
-                            RESTORAN_AKTIF["kategori"],
-                            size=12,
-                            color="#E2E8F0",
+                            color=WARNA_TEXT_DARK,
                         ),
                         ft.Row(
-                            spacing=6,
+                            spacing=5,
                             controls=[
-                                ft.Icon(
-                                    ft.Icons.STAR,
-                                    color="#FACC15",
-                                    size=14,
-                                ),
                                 ft.Text(
-                                    f"{RESTORAN_AKTIF['rating']}  •  {RESTORAN_AKTIF['jarak']}  •  Ongkir Rp {RESTORAN_AKTIF['ongkir']:,}",
+                                    RESTORAN_AKTIF["kategori"],
                                     size=12,
-                                    color="#CBD5E1",
+                                    color=WARNA_TEXT_MUTED,
+                                ),
+                                ft.Text("•", size=12, color=WARNA_TEXT_MUTED),
+                                ft.Icon(ft.Icons.STAR, color="#eab308", size=14),
+                                ft.Text(
+                                    f"{RESTORAN_AKTIF['rating']} • {RESTORAN_AKTIF['jarak']} • Ongkir Rp {RESTORAN_AKTIF['ongkir']:,}",
+                                    size=12,
+                                    weight=ft.FontWeight.W_500,
+                                    color="#15803d",
                                 ),
                             ],
                         ),
@@ -200,10 +236,13 @@ def buat_beranda_user(on_checkout=None):
     # Kotak pencarian menu
     input_cari = ft.TextField(
         hint_text="Cari menu makanan...",
+        hint_style=ft.TextStyle(color=WARNA_TEXT_MUTED, size=14),
         prefix_icon=ft.Icons.SEARCH,
         border_radius=12,
-        bgcolor="#efe7dc",
-        color="#2d241e",
+        bgcolor=WARNA_CARD,
+        border_color=WARNA_BORDER,
+        focused_border_color=WARNA_PRIMARY,
+        color=WARNA_TEXT_DARK,
         on_change=lambda e: (
             perbarui_daftar_menu(e.control.value),
             daftar_kartu_menu.update(),
@@ -211,31 +250,39 @@ def buat_beranda_user(on_checkout=None):
     )
 
     # Filter kategori menu
-    def pilih_kategori(kat):
-        nonlocal kategori_aktif
-        kategori_aktif = kat
-        perbarui_daftar_menu(input_cari.value)
-        daftar_kartu_menu.update()
-
     daftar_kategori = ["Semua", "Daging", "Ayam", "Ikan", "Telur", "Pelengkap"]
-    baris_kategori = ft.Row(
-        scroll=ft.ScrollMode.AUTO,
-        spacing=8,
-        controls=[
+
+    def render_kategori():
+        baris_kategori.controls = [
             ft.Button(
                 kat,
-                bgcolor="#d95d39",
-                color="white",
+                bgcolor=WARNA_PRIMARY if kat == kategori_aktif else WARNA_CARD,
+                color="white" if kat == kategori_aktif else WARNA_TEXT_DARK,
+                elevation=0,
+                style=ft.ButtonStyle(
+                    shape=ft.RoundedRectangleBorder(radius=10),
+                    side=ft.BorderSide(
+                        1, WARNA_PRIMARY if kat == kategori_aktif else WARNA_BORDER
+                    ),
+                ),
                 on_click=lambda e, k=kat: pilih_kategori(k),
             )
             for kat in daftar_kategori
-        ],
-    )
+        ]
+
+    def pilih_kategori(kat):
+        nonlocal kategori_aktif
+        kategori_aktif = kat
+        render_kategori()
+        perbarui_daftar_menu(input_cari.value)
+        baris_kategori.update()
+        daftar_kartu_menu.update()
 
     # Bar ringkasan pesanan di bawah
     bar_pesanan = ft.Container(
-        bgcolor="#2d241e",
-        border_radius=12,
+        bgcolor=WARNA_CARD,
+        border=ft.Border.all(1, WARNA_BORDER),
+        border_radius=14,
         padding=14,
         content=ft.Row(
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
@@ -244,32 +291,43 @@ def buat_beranda_user(on_checkout=None):
                 ft.Container(expand=True, content=teks_ringkasan),
                 ft.Button(
                     "Pesan",
-                    bgcolor="#d95d39",
+                    bgcolor=WARNA_PRIMARY,
                     color="white",
+                    elevation=0,
+                    style=ft.ButtonStyle(
+                        shape=ft.RoundedRectangleBorder(radius=10),
+                        padding=ft.Padding.symmetric(horizontal=20, vertical=12),
+                    ),
                     on_click=lambda e: on_checkout(keranjang) if on_checkout else None,
                 ),
             ],
         ),
     )
 
+    render_kategori()
     hitung_ringkasan()
     perbarui_daftar_menu()
 
-    return ft.Column(
+    return ft.Container(
         expand=True,
-        scroll=ft.ScrollMode.AUTO,
-        spacing=14,
-        controls=[
-            header_resto,
-            input_cari,
-            baris_kategori,
-            ft.Text(
-                "Daftar Menu",
-                size=16,
-                weight=ft.FontWeight.BOLD,
-                color="#2d241e",
-            ),
-            daftar_kartu_menu,
-            bar_pesanan,
-        ],
+        bgcolor=WARNA_BG,
+        padding=14,
+        content=ft.Column(
+            expand=True,
+            scroll=ft.ScrollMode.AUTO,
+            spacing=14,
+            controls=[
+                header_resto,
+                input_cari,
+                baris_kategori,
+                ft.Text(
+                    "Daftar Menu",
+                    size=16,
+                    weight=ft.FontWeight.BOLD,
+                    color=WARNA_TEXT_DARK,
+                ),
+                daftar_kartu_menu,
+                bar_pesanan,
+            ],
+        ),
     )
