@@ -12,8 +12,8 @@ def main(page: ft.Page):
     def keluar_akun(e):
         tampilkan_login()
 
-    def buka_detail_resto(data_resto):
-        print("Restoran dipilih:", data_resto["nama"])
+    def lanjut_checkout(keranjang: dict[str, int]):
+        print("Pesanan dipilih:", keranjang)
 
     def buka_beranda_role(role: str, nama_user: str):
         page.clean()
@@ -31,7 +31,7 @@ def main(page: ft.Page):
                     )
                 ],
             )
-            konten = buat_beranda_user(on_checkout=buka_detail_resto)
+            konten = buat_beranda_user(on_checkout=lanjut_checkout)
             page.add(konten)
             return
         else:
