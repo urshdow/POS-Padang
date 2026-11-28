@@ -16,7 +16,7 @@ RESTORAN_AKTIF = {
         {"id": "M07", "nama": "Ayam Goreng Lengkuas", "kategori": "Ayam", "harga": 20000, "gambar": "Menu/ayamgoreng.jpg"},
         {"id": "M08", "nama": "Ayam Gulai", "kategori": "Ayam", "harga": 22000, "gambar": "Menu/ayamgulai.jpg"},
         {"id": "M09", "nama": "Ayam Bakar", "kategori": "Ayam", "harga": 22000, "gambar": "Menu/ayambakar.jpg"},
-        {"id": "M010", "nama": "Gulai Otak", "kategori": "Daging", "harga": 26000, "gambar": "Menu/gulaiotak.avif"},
+        {"id": "M010", "nama": "Gulai Otak", "kategori": "Daging", "harga": 26000, "gambar": "Menu/gulaiotak.jpg"},
         {"id": "M011", "nama": "Paru Goreng", "kategori": "Daging", "harga": 20000, "gambar": "Menu/parugoreng.jpeg"},
         {"id": "M012", "nama": "Sate Padang", "kategori": "Daging", "harga": 25000, "gambar": "Menu/satepadang.jpg"},
         {"id": "M013", "nama": "Udang Balado", "kategori": "Ikan", "harga": 30000, "gambar": "Menu/udangbalado.jpg"},
