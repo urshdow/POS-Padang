@@ -146,7 +146,7 @@ def tampilkan_keranjang(
                     src=item["gambar"],
                     width=85,
                     height=85,
-                    fit=ft.BoxFit.COVER
+                    fit=ft.ImageFit.COVER
                 )
                 if item["gambar"]
                 else ft.Container(
