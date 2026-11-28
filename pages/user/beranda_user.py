@@ -9,10 +9,34 @@ RESTORAN_AKTIF = {
     "menu": [
         {"id": "M01", "nama": "Rendang Daging", "kategori": "Daging", "harga": 22000},
         {"id": "M02", "nama": "Ayam Pop", "kategori": "Ayam", "harga": 20000},
-        {"id": "M03", "nama": "Dendeng Balado", "kategori": "Daging", "harga": 21000},
-        {"id": "M04", "nama": "Gulai Kepala Kakap", "kategori": "Ikan", "harga": 28000},
-        {"id": "M05", "nama": "Telur Dadar Padang", "kategori": "Telur", "harga": 10000},
-        {"id": "M06", "nama": "Daun Singkong & Sambal", "kategori": "Pelengkap", "harga": 6000},
+        {"id": "M03", "nama": "Dendeng Batokok", "kategori": "Daging", "harga": 21000},
+        {"id": "M04", "nama": "Gulai Kepala Kakap", "kategori": "Ikan", "harga": 35000},
+        {"id": "M05", "nama": "Telur Barendo", "kategori": "Telur", "harga": 10000},
+        {"id": "M06", "nama": "Gulai Tunjang", "kategori": "Daging", "harga": 25000},
+        {"id": "M07", "nama": "Ayam Goreng Lengkuas", "kategori": "Ayam", "harga": 20000},
+        {"id": "M08", "nama": "Ayam Gulai", "kategori": "Ayam", "harga": 22000},
+        {"id": "M09", "nama": "Ayam Bakar", "kategori": "Ayam", "harga": 22000},
+        {"id": "M010", "nama": "Gulai Otak", "kategori": "Daging", "harga": 26000},
+        {"id": "M011", "nama": "Paru Goreng", "kategori": "Daging", "harga": 20000},
+        {"id": "M012", "nama": "Sate Padang", "kategori": "Daging", "harga": 25000},
+        {"id": "M013", "nama": "Udang Balado", "kategori": "Ikan", "harga": 30000},
+        {"id": "M014", "nama": "Udang Goreng Tepung", "kategori": "Ikan", "harga": 28000},
+        {"id": "M015", "nama": "Cumi Goreng Tepung", "kategori": "Ikan", "harga": 30000},
+        {"id": "M016", "nama": "Cumi Gulai", "kategori": "Ikan", "harga": 32000},
+        {"id": "M017", "nama": "Ikan Bakar", "kategori": "Ikan", "harga": 35000},
+        {"id": "M018", "nama": "Telur Balado", "kategori": "Telur", "harga": 10000},
+        {"id": "M019", "nama": "Telur Gulai", "kategori": "Telur", "harga": 13000},
+        {"id": "M020", "nama": "Perkedel Kentang", "kategori": "Pelengkap", "harga": 8000},
+        {"id": "M021", "nama": "Daun Singkong Rebus & Gulai Nangka", "kategori": "Pelengkap", "harga": 12000},
+        {"id": "M022", "nama": "Terong Balado", "kategori": "Pelengkap", "harga": 10000},
+        {"id": "M023", "nama": "Jengkol Balado", "kategori": "Pelengkap", "harga": 12000},
+        {"id": "M024", "nama": "Sambal Hijau & Sambal Merah", "kategori": "Pelengkap", "harga": 5000},
+        {"id": "M025", "nama": "Es Teh Manis", "kategori": "Minuman", "harga": 8000},
+        {"id": "M026", "nama": "Es Jeruk", "kategori": "Minuman", "harga": 10000},
+        {"id": "M027", "nama": "Es Campur", "kategori": "Minuman", "harga": 15000},
+        {"id": "M028", "nama": "Teh Panas", "kategori": "Minuman", "harga": 5000},
+        {"id": "M029", "nama": "Jeruk Panas", "kategori": "Minuman", "harga": 8000},
+        {"id": "M030", "nama": "Kopi Hitam", "kategori": "Minuman", "harga": 10000}
     ],
 }
 
@@ -218,7 +242,7 @@ def buat_beranda_user(on_checkout=None, keranjang_awal=None):
                                 ft.Text("•", size=12, color=WARNA_TEXT_MUTED),
                                 ft.Icon(ft.Icons.STAR, color="#eab308", size=14),
                                 ft.Text(
-                                    f"{RESTORAN_AKTIF['rating']} • {RESTORAN_AKTIF['jarak']} • Ongkir Rp {RESTORAN_AKTIF['ongkir']:,}",
+                                    RESTORAN_AKTIF["rating"],
                                     size=12,
                                     weight=ft.FontWeight.W_500,
                                     color="#15803d",
@@ -248,7 +272,7 @@ def buat_beranda_user(on_checkout=None, keranjang_awal=None):
     )
 
     # Filter kategori menu
-    daftar_kategori = ["Semua", "Daging", "Ayam", "Ikan", "Telur", "Pelengkap"]
+    daftar_kategori = ["Semua", "Daging", "Ayam", "Ikan", "Telur", "Pelengkap", "Minuman"]
 
     def render_kategori():
         baris_kategori.controls = [
