@@ -273,7 +273,7 @@ def tampilkan_keranjang(
                             color="#6C757D"
                         ),
 
-                        ft.ElevatedButton(
+                        ft.Button(
                             "Mulai Belanja",
                             on_click=lambda e: (
                                 on_kembali() if on_kembali else None
@@ -339,7 +339,7 @@ def tampilkan_keranjang(
                         alignment=ft.MainAxisAlignment.SPACE_BETWEEN
                     ),
 
-                    ft.ElevatedButton(
+                    ft.Button(
                         "Lanjut ke Checkout",
                         width=300,
                         disabled=(

@@ -26,9 +26,9 @@ WARNA_TEXT_DARK = "#1c1917"   # Teks utama gelap
 WARNA_TEXT_MUTED = "#78716c"  # Teks sekunder abu-abu hangat
 
 
-def buat_beranda_user(on_checkout=None):
+def buat_beranda_user(on_checkout=None, keranjang_awal=None):
     kategori_aktif = "Semua"
-    keranjang = {}  # {menu_id: jumlah}
+    keranjang = keranjang_awal if keranjang_awal is not None else {}
 
     daftar_kartu_menu = ft.Column(spacing=10)
     baris_kategori = ft.Row(scroll=ft.ScrollMode.AUTO, spacing=8)
