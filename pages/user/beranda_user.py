@@ -7,7 +7,7 @@ RESTORAN_AKTIF = {
     "rating": "4.8",
     "koordinat": (-7.9797, 112.6304),
     "menu": [
-        {"id": "M01", "nama": "Rendang Daging", "kategori": "Daging", "harga": 22000},
+        {"id": "M01", "nama": "Rendang Daging", "kategori": "Daging", "harga": 22000, "gambar": "menu/rendangdaging"},
         {"id": "M02", "nama": "Ayam Pop", "kategori": "Ayam", "harga": 20000},
         {"id": "M03", "nama": "Dendeng Batokok", "kategori": "Daging", "harga": 21000},
         {"id": "M04", "nama": "Gulai Kepala Kakap", "kategori": "Ikan", "harga": 35000},
