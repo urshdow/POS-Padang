@@ -5,8 +5,6 @@ RESTORAN_AKTIF = {
     "nama": "Warung Padang Sederhana",
     "kategori": "Masakan Padang",
     "rating": "4.8",
-    "jarak": "1.2 km",
-    "ongkir": 5000,
     "koordinat": (-7.9797, 112.6304),
     "menu": [
         {"id": "M01", "nama": "Rendang Daging", "kategori": "Daging", "harga": 22000},
@@ -49,10 +47,10 @@ def buat_beranda_user(on_checkout=None):
             jumlah = keranjang.get(item["id"], 0)
             subtotal += item["harga"] * jumlah
 
-        total_bayar = subtotal + RESTORAN_AKTIF["ongkir"] if total_item > 0 else 0
+        total_bayar = subtotal if total_item > 0 else 0
         teks_ringkasan.value = (
             f"{total_item} item  •  Subtotal Rp {subtotal:,}\n"
-            f"Total (+Ongkir Rp {RESTORAN_AKTIF['ongkir']:,}): Rp {total_bayar:,}"
+            f"Total: Rp {total_bayar:,}"
         )
 
     def ubah_jumlah(menu_id, delta):
