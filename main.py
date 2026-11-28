@@ -79,4 +79,4 @@ def main(page: ft.Page):
     # Mulai dari halaman login
     tampilkan_login()
 
-ft.run(main)
+ft.run(main, assets_dir="assets", view=ft.AppView.WEB_BROWSER)
